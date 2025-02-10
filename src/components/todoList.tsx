@@ -5,6 +5,7 @@ import { TodoItem } from './todo';
 interface TodoListProps {
   filteredTodos: Todo[];
   isActive: number | undefined;
+  isLoading: boolean;
 }
 
 export const TodoList: React.FC<TodoListProps> = ({
@@ -14,7 +15,12 @@ export const TodoList: React.FC<TodoListProps> = ({
   return (
     <section className="todoapp__main" data-cy="TodoList">
       {filteredTodos.map(todo => (
-        <TodoItem key={todo.id} todo={todo} isActive={isActive} />
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          isActive={isActive}
+          isLoading={false} //убрати
+        />
       ))}
     </section>
   );

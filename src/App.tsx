@@ -8,38 +8,54 @@ import { TodoList } from './components/todoList';
 import { Footer } from './components/footer';
 import { Error } from './components/Error';
 import { Todo } from './types/Todo';
+import { Filter } from './types/Filter';
 
 export const App: React.FC = () => {
   const newTodoInputRef = useRef<HTMLInputElement>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [newTodo, setNewTodo] = useState<string>('');
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [newFilter, setNewFilter] = useState<string>('');
-  const [todoClear, seTodoClear] = useState<boolean>(false);
-  const [filter] = useState<string>('All');
+  const [newFilter, setNewFilter] = useState<Filter>(Filter.All);
   const [isActive] = useState<number>();
   const todosLeft = todos.filter(todo => !todo.completed).length;
+  const [isLoading, setIsLoading] = useState(false);
+  const [todoClear, setTodoClear] = useState<boolean>(false);
 
   const loadTodos = async () => {
+    setIsLoading(true);
     setErrorMessage('');
+
     try {
       const todosData = await getTodos();
 
       setTodos(todosData);
     } catch (error) {
       setErrorMessage('Unable to load todos');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     loadTodos();
-    newTodoInputRef.current?.focus();
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
+    setTodoClear(todos.some(todo => todo.completed)); // Тепер відображається, коли є завершені todo
+  }, [todos]);
+
+  useEffect(() => {
+    if (newTodoInputRef.current) {
+      newTodoInputRef.current.focus();
+    }
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
       setErrorMessage('');
     }, 3000);
+
+    return () => clearTimeout(timer);
   }, [errorMessage]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -54,15 +70,15 @@ export const App: React.FC = () => {
   };
 
   const filteredTodos = todos.filter(todo => {
-    if (filter === 'All') {
+    if (newFilter === Filter.All) {
       return true;
     }
 
-    if (filter === 'Active') {
+    if (newFilter === Filter.Active) {
       return !todo.completed;
     }
 
-    if (filter === 'Completed') {
+    if (newFilter === Filter.Completed) {
       return todo.completed;
     }
 
@@ -71,10 +87,6 @@ export const App: React.FC = () => {
 
   if (!USER_ID) {
     return <UserWarning />;
-  }
-
-  if (todosLeft !== 0) {
-    seTodoClear(true);
   }
 
   return (
@@ -86,7 +98,12 @@ export const App: React.FC = () => {
         newTodo={newTodo}
         setNewTodo={setNewTodo}
       />
-      <TodoList filteredTodos={filteredTodos} isActive={isActive} />
+      <TodoList
+        filteredTodos={filteredTodos}
+        isActive={isActive}
+        isLoading={isLoading}
+      />
+
       <Footer
         todoClear={todoClear}
         newFilter={newFilter}

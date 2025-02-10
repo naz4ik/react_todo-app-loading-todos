@@ -1,9 +1,10 @@
 import React from 'react';
+import { Filter } from '../types/Filter'; // Імпорт enum
 
 interface Props {
   todoClear: boolean;
-  newFilter: string;
-  setNewFilter: (newFilter: string) => void;
+  newFilter: Filter;
+  setNewFilter: (newFilter: Filter) => void;
   todosLeft: number;
 }
 
@@ -21,37 +22,20 @@ export const Footer: React.FC<Props> = ({
             {todosLeft} items left
           </span>
 
-          {/* Active link should have the 'selected' class */}
           <nav className="filter" data-cy="Filter">
-            <a
-              href="#/"
-              className={`filter__link ${newFilter === 'All' ? 'selected' : ''} `}
-              data-cy="FilterLinkAll"
-              onClick={() => setNewFilter('All')}
-            >
-              All
-            </a>
-
-            <a
-              href="#/active"
-              className={`filter__link ${newFilter === 'Active' ? 'selected' : ''} `}
-              data-cy="FilterLinkActive"
-              onClick={() => setNewFilter('Active')}
-            >
-              Active
-            </a>
-
-            <a
-              href="#/completed"
-              className={`filter__link ${newFilter === 'Completed' ? 'selected' : ''} `}
-              data-cy="FilterLinkCompleted"
-              onClick={() => setNewFilter('Completed')}
-            >
-              Completed
-            </a>
+            {Object.values(Filter).map(filter => (
+              <a
+                key={filter}
+                href={`#/${filter}`}
+                className={`filter__link ${newFilter === filter ? 'selected' : ''}`}
+                data-cy={`FilterLink${filter}`}
+                onClick={() => setNewFilter(filter)}
+              >
+                {filter.charAt(0).toUpperCase() + filter.slice(1)}
+              </a>
+            ))}
           </nav>
 
-          {/* this button should be disabled if there are no completed todos */}
           <button
             type="button"
             className="todoapp__clear-completed"

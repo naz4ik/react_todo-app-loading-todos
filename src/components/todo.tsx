@@ -5,11 +5,13 @@ import classNames from 'classnames';
 interface TodoItemProps {
   todo: Todo;
   isActive: number | undefined;
+  isLoading: boolean;
 }
 
 export const TodoItem: React.FC<TodoItemProps> = ({
   todo: { id, title, completed },
   isActive,
+  isLoading,
 }) => {
   return (
     <div
@@ -42,7 +44,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({
             className="todo__title-field"
             placeholder="Empty todo will be deleted"
             value={title}
-            onChange={() => {}}
+            onClick={() => {}}
           />
         </form>
       ) : (
@@ -55,20 +57,19 @@ export const TodoItem: React.FC<TodoItemProps> = ({
             type="button"
             className="todo__remove"
             data-cy="TodoDelete"
-            onChange={() => {}}
+            onClick={() => {}}
           >
             ×
           </button>
         </>
       )}
 
-      <div
-        data-cy="TodoLoader"
-        className={classNames('modal overlay', 'is-active')}
-      >
-        <div className="modal-background has-background-white-ter" />
-        <div className="loader" />
-      </div>
+      {isLoading && (
+        <div data-cy="TodoLoader" className="modal overlay is-active">
+          <div className="modal-background has-background-white-ter" />
+          <div className="loader" />
+        </div>
+      )}
     </div>
   );
 };
