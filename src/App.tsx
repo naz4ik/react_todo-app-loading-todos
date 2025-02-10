@@ -98,18 +98,23 @@ export const App: React.FC = () => {
         newTodo={newTodo}
         setNewTodo={setNewTodo}
       />
-      <TodoList
-        filteredTodos={filteredTodos}
-        isActive={isActive}
-        isLoading={isLoading}
-      />
 
-      <Footer
-        todoClear={todoClear}
-        newFilter={newFilter}
-        setNewFilter={setNewFilter}
-        todosLeft={todosLeft}
-      />
+      {todos.length > 0 && (
+        <TodoList
+          filteredTodos={filteredTodos}
+          isActive={isActive}
+          isLoading={isLoading}
+        />
+      )}
+
+      {todos.length > 0 && (
+        <Footer
+          todoClear={todoClear}
+          newFilter={newFilter}
+          setNewFilter={setNewFilter}
+          todosLeft={todosLeft}
+        />
+      )}
       <Error errorMessage={errorMessage} setErrorMessage={setErrorMessage} />
     </div>
   );
