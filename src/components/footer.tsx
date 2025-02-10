@@ -1,5 +1,5 @@
 import React from 'react';
-import { Filter } from '../types/Filter'; // Імпорт enum
+import { Filter } from '../types/Filter';
 
 interface Props {
   todoClear: boolean;
