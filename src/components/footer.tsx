@@ -1,13 +1,16 @@
 import React from 'react';
 import { Filter } from '../types/Filter';
 import classNames from 'classnames';
+
 interface Props {
   todoClear: boolean;
   newFilter: Filter;
   setNewFilter: (newFilter: Filter) => void;
   todosLeft: number;
 }
+
 export const Footer: React.FC<Props> = ({
+  todoClear,
   newFilter,
   setNewFilter,
   todosLeft,
@@ -19,40 +22,25 @@ export const Footer: React.FC<Props> = ({
           {todosLeft} items left
         </span>
         <nav className="filter" data-cy="Filter">
-          <a
-            href="#/"
-            className={classNames('filter__link', {
-              selected: newFilter === Filter.All,
-            })}
-            data-cy="FilterLinkAll"
-            onClick={() => setNewFilter(Filter.All)}
-          >
-            All
-          </a>
-          <a
-            href="#/active"
-            className={classNames('filter__link', {
-              selected: newFilter === Filter.Active,
-            })}
-            data-cy="FilterLinkActive"
-            onClick={() => setNewFilter(Filter.Active)}
-          >
-            Active
-          </a>
-          <a
-            href="#/completed"
-            className={classNames('filter__link', {
-              selected: newFilter === Filter.Completed,
-            })}
-            data-cy="FilterLinkCompleted"
-            onClick={() => setNewFilter(Filter.Completed)}
-          >
-            Completed
-          </a>
+          {Object.values(Filter).map(filter => (
+            <a
+              key={filter}
+              href={`#/${filter.toLowerCase()}`}
+              className={classNames('filter__link', {
+                selected: newFilter === filter,
+              })}
+              data-cy={`FilterLink${filter}`}
+              onClick={() => setNewFilter(filter)}
+            >
+              {filter.charAt(0).toUpperCase() + filter.slice(1)}
+            </a>
+          ))}
         </nav>
         <button
           type="button"
-          className="todoapp__clear-completed"
+          className={classNames('todoapp__clear-completed', {
+            hidden: !todoClear,
+          })}
           data-cy="ClearCompletedButton"
         >
           Clear completed
